@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Jogo da cobrinha</title>
+</head>
+<body>
+
+	<canvas id="stage" width="400" height="400"></canvas>
+	<script type="text/javascript">
+		
+
+		window.onload = function() { //Carregando a nossa página/janela.
+
+			var stage = document.getElementById('stage'); //Pegando o elemento do meu html e passando o id.
+			var ctx = stage.getContext("2d"); //Aqui dentro é onde faremos toda a parte gráfica.
+			
+			document.addEventListener("keydown", keyPush); //Adicionando um evento listener, que vai esperar um evento acontecer(alguma tecla serpressionada), para fazer algo, que no caso será disparar a nossa função Push
+
+			setInterval(game, 80);//Defino uma função que será chamada no tempo que eu passar.
+
+			//Definindo algumas funções
+			const velocidade = 1;//Cada vez que eu chamar a função game(), a cobrinha andará uma casa.
+			var velocidadex = 0; //Velocidade de x inicia com zero, pois a cobrinha inicia parada.
+			var velocidadey = 0; ////Velocidade de y inicia com zero, pois a cobrinha inicia parada.
+
+			var pontox = 8;
+			var pontoy = 10;
+
+			//Tamanho da maçã
+			var tamanhopeca = 20; //Cada quadrado terá o tamanho igual a 20
+			var quantidadepeca = 20; //Quantidades de peças no tabuleiro igual a 20 também.
+
+			//Posição inicial da maçã
+			var posicaoinicialx = 15;
+			var posicaoinicialy = 15;
+
+			//Definindo os elementos que eu irei ter na cobrinha.
+			var trilha = [];
+			cauda = 5; //Tamanho inicial da cobrinha.
+
+
+			function game() {
+
+				pontox += velocidadex;
+				pontoy += velocidadey;
+
+				if(pontox < 0 ) {
+					pontox = quantidadepeca - 1;
+				}
+
+				if(pontox > quantidadepeca - 1) {
+					pontox = 0;
+				}
+
+				if(pontoy < 0) {
+					pontoy = quantidadepeca - 1;
+				}
+
+				if(pontoy > quantidadepeca - 1) {
+					pontoy = 0;
+				}
+
+				ctx.fillStyle = "#191930"; //Pintando o tabuleiro
+				ctx.fillRect(0,0, stage.width, stage.height); //Começando no ponto 0,0 e pintando toda a parte do stage.
+
+				ctx.fillStyle = "#800000";//Pintando a maçã
+				ctx.fillRect(posicaoinicialx * tamanhopeca, posicaoinicialy * tamanhopeca, tamanhopeca, tamanhopeca );
+
+				ctx.fillStyle = "#008000";//Pintando a cobrinha
+				for (var i = 1; i < trilha.length; i++) {
+
+					ctx.fillRect(trilha[i].x * tamanhopeca, trilha[i].y * tamanhopeca, tamanhopeca-1, tamanhopeca-1);
+
+					if(trilha[i].x == pontox && trilha[i].y == pontoy) { //Tratando o caso de a cobrinha bater no seu rastro
+						velocidadex = velocidadey = 0;
+						ctx.fillStyle = '#fff';
+				      	ctx.font = "30px Arial";
+				      	ctx.fillText("Game Over", 120, 150);
+
+				      	ctx.fillStyle = '#fff';
+				      	ctx.font = "10px Arial";
+
+				      	ctx.fillStyle = '#fff';
+				      	ctx.font = "15px Arial";
+				      	ctx.fillText('Jogar de novo? Aperte pra cima/Up!', 100, 250)
+						cauda = 5;
+						break;
+
+					}
+				}
+
+
+				trilha.push({x: pontox, y: pontoy})
+				while(trilha.length > cauda) {
+					trilha.shift();
+				}
+
+				if(posicaoinicialx == pontox && posicaoinicialy == pontoy) {//Tratando o caso de a cobrinha comer uma maçã
+					cauda++
+					posicaoinicialx = posicaoinicialy = Math.floor(Math.random() * quantidadepeca);//Reposicionando a maça com Math.floor que serve para arredondar para baixo, utilizando um número randomico.
+				}
+			}
+
+			//Tratando da movimentação da cobrinha
+			function keyPush(event) {
+
+				switch(event.keyCode) { //Aqui iremos verificar qual o código do meu evento, que no caso, será qual tecla foi pressionada.
+					case 37: //Tecla da esquerda Left
+						 velocidadex = -velocidade;
+						 velocidadey = 0;
+						 break;
+
+					case 38: //Techa superior Up
+						velocidadex = 0;
+						velocidadey = -velocidade;
+						break;
+
+					case 39: //Tecla da direita Right
+						velocidadex = velocidade;
+						velocidadey = 0
+						break;
+
+					case 40: //Tecla inferior Down
+						velocidadex = 0;
+						velocidadey = velocidade;
+						break;
+					default:
+
+						break;
+
+				}
+			}
+		}
+
+	</script>
+
+</body>
+</html>
